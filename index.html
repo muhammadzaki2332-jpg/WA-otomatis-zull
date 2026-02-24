@@ -75,9 +75,8 @@ button{
 <textarea id="message" placeholder="Tulis pesan..."></textarea>
 
 <select id="timerSelect">
-<option value="5">Delay 5 Detik</option>
-<option value="10">Delay 10 Detik</option>
-<option value="30">Delay 30 Detik</option>
+<option value="120">Delay 2 Menit</option>
+<option value="300">Delay 5 Menit</option>
 </select>
 
 <div id="countdown"></div>
@@ -94,6 +93,30 @@ let templateSelect=document.getElementById("templateSelect");
 
 function startCountdown(){
  let timeLeft=parseInt(timerSelect.value);
+ btn.disabled=true; 
+ btn.className="disabled";
+
+ updateDisplay(timeLeft);
+
+ let timer=setInterval(()=>{
+   timeLeft--;
+   updateDisplay(timeLeft);
+
+   if(timeLeft<=0){
+     clearInterval(timer);
+     countdownEl.innerHTML="Siap dikirim!";
+     btn.disabled=false; 
+     btn.className="enabled";
+   }
+ },1000);
+}
+
+function updateDisplay(seconds){
+ let minutes=Math.floor(seconds/60);
+ let remaining=seconds%60;
+ countdownEl.innerHTML=
+   "Tunggu "+minutes+" menit "+remaining+" detik...";
+}
  btn.disabled=true; btn.className="disabled";
  countdownEl.innerHTML="Tunggu "+timeLeft+" detik...";
  let timer=setInterval(()=>{
