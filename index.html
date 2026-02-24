@@ -4,7 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WA Otomatis - Zull Tool v2.0</title>
-<style>
+<style>.timer-wrapper{
+  position:relative;
+  width:120px;
+  height:120px;
+  margin:15px auto;
+}
+
+.progress-ring{
+  transform:rotate(-90deg);
+}
+
+.progress-ring__circle{
+  stroke-dasharray: 326;
+  stroke-dashoffset: 326;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-text{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-weight:bold;
+  font-size:14px;
+  text-align:center;
+}
 :root{
   --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
   --card:#ffffff; --text:#111; --muted:#666;
@@ -79,7 +104,19 @@ button{
 <option value="300">Delay 5 Menit</option>
 </select>
 
-<div id="countdown"></div>
+<div class="timer-wrapper">
+  <svg class="progress-ring" width="120" height="120">
+    <circle
+      class="progress-ring__circle"
+      stroke="#25D366"
+      stroke-width="8"
+      fill="transparent"
+      r="52"
+      cx="60"
+      cy="60"/>
+  </svg>
+  <div id="countdown" class="timer-text"></div>
+</div>
 <button id="sendBtn" class="disabled" disabled>Kirim Pesan</button>
 
 </div>
@@ -92,22 +129,39 @@ let timerSelect=document.getElementById("timerSelect");
 let templateSelect=document.getElementById("templateSelect");
 
 function startCountdown(){
- let timeLeft=parseInt(timerSelect.value);
- btn.disabled=true; 
- btn.className="disabled";
+ let totalTime=parseInt(timerSelect.value);
+ let timeLeft=totalTime;
 
- updateDisplay(timeLeft);
+ const circle=document.querySelector('.progress-ring__circle');
+ const radius=52;
+ const circumference=2*Math.PI*radius;
+
+ circle.style.strokeDasharray=circumference;
+ circle.style.strokeDashoffset=circumference;
+
+ btn.disabled=true;
+ btn.className="disabled";
 
  let timer=setInterval(()=>{
    timeLeft--;
-   updateDisplay(timeLeft);
+
+   let progress=(totalTime-timeLeft)/totalTime;
+   let offset=circumference-(progress*circumference);
+   circle.style.strokeDashoffset=offset;
+
+   let minutes=Math.floor(timeLeft/60);
+   let seconds=timeLeft%60;
+
+   countdownEl.innerHTML=
+     minutes+"m "+(seconds<10?"0"+seconds:seconds)+"s";
 
    if(timeLeft<=0){
      clearInterval(timer);
-     countdownEl.innerHTML="Siap dikirim!";
-     btn.disabled=false; 
+     countdownEl.innerHTML="Siap!";
+     btn.disabled=false;
      btn.className="enabled";
    }
+
  },1000);
 }
 
