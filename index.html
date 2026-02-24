@@ -2,97 +2,157 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>WA Otomatis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WA Otomatis - Zull Tool v2.0</title>
 <style>
-body {
-    font-family: Arial;
-    background: #f4f6f9;
-    text-align: center;
-    padding: 40px;
+:root{
+  --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
+  --card:#ffffff; --text:#111; --muted:#666;
+  --primary:#25D366; --danger:#e74c3c;
 }
-
-.container {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    max-width: 400px;
-    margin: auto;
+body.dark{
+  --card:#1f1f1f; --text:#f5f5f5; --muted:#aaa;
 }
-
-input, textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+body{
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  display:flex; justify-content:center; align-items:center;
+  height:100vh; margin:0;
 }
-
-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 16px;
+.container{
+  background:var(--card); color:var(--text);
+  padding:28px; border-radius:16px; width:360px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.35);
+  animation:fadeIn .6s ease;
 }
-
-.disabled {
-    background: gray;
-    color: white;
+h2{margin:0 0 4px; text-align:center;}
+.brand{font-size:12px; color:var(--muted); text-align:center; margin-bottom:12px;}
+input,textarea,select{
+  width:100%; padding:10px; margin:8px 0;
+  border-radius:8px; border:1px solid #ccc; font-size:14px;
 }
-
-.enabled {
-    background: #25D366;
-    color: white;
-    cursor: pointer;
+button{
+  width:100%; padding:12px; border:none;
+  border-radius:10px; font-weight:bold; font-size:15px;
+  transition:.3s;
 }
-
-#countdown {
-    margin: 10px 0;
-    font-weight: bold;
+.disabled{background:#aaa;color:white;}
+.enabled{
+  background:var(--primary); color:white;
+  box-shadow:0 0 15px var(--primary);
+  cursor:pointer;
+}
+.enabled:hover{transform:scale(1.03);}
+#error{color:var(--danger); font-size:12px;}
+#countdown{text-align:center; font-weight:bold; margin:5px 0;}
+.toggle{
+  text-align:right; font-size:12px; cursor:pointer;
+  color:var(--muted); margin-bottom:8px;
+}
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(15px);}
+  to{opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
 <body>
 
 <div class="container">
+<div class="toggle" onclick="toggleMode()">Toggle Dark/Light</div>
 <h2>Kirim WhatsApp Otomatis</h2>
+<div class="brand">Zull Web Tool v2.0</div>
 
-<input type="text" id="number" placeholder="628xxxx">
+<input type="text" id="number" placeholder="08xxxx atau 628xxxx">
+<div id="error"></div>
+
+<select id="templateSelect">
+<option value="">-- Pilih Template Pesan --</option>
+<option value="Halo, saya ingin bertanya terkait informasi.">Template 1 - Umum</option>
+<option value="Assalamualaikum, izin konfirmasi jadwal ya.">Template 2 - Konfirmasi</option>
+<option value="Terima kasih atas informasinya sebelumnya.">Template 3 - Terima kasih</option>
+</select>
+
 <textarea id="message" placeholder="Tulis pesan..."></textarea>
 
-<div id="countdown">Tunggu 5 detik...</div>
+<select id="timerSelect">
+<option value="5">Delay 5 Detik</option>
+<option value="10">Delay 10 Detik</option>
+<option value="30">Delay 30 Detik</option>
+</select>
 
+<div id="countdown"></div>
 <button id="sendBtn" class="disabled" disabled>Kirim Pesan</button>
 
-<textarea placeholder="Catatan tambahan..." style="margin-top:15px;"></textarea>
 </div>
 
 <script>
-let timeLeft = 5;
-let countdownEl = document.getElementById("countdown");
-let btn = document.getElementById("sendBtn");
+let btn=document.getElementById("sendBtn");
+let countdownEl=document.getElementById("countdown");
+let errorEl=document.getElementById("error");
+let timerSelect=document.getElementById("timerSelect");
+let templateSelect=document.getElementById("templateSelect");
 
-let timer = setInterval(() => {
-    timeLeft--;
-    countdownEl.innerHTML = "Tunggu " + timeLeft + " detik...";
-
-    if(timeLeft <= 0){
-        clearInterval(timer);
-        countdownEl.innerHTML = "Siap dikirim!";
-        btn.classList.remove("disabled");
-        btn.classList.add("enabled");
-        btn.disabled = false;
-    }
-}, 1000);
-
-btn.onclick = function(){
-    let number = document.getElementById("number").value;
-    let message = document.getElementById("message").value;
-    let link = "https://wa.me/" + number + "?text=" + encodeURIComponent(message);
-    window.open(link, "_blank");
+function startCountdown(){
+ let timeLeft=parseInt(timerSelect.value);
+ btn.disabled=true; btn.className="disabled";
+ countdownEl.innerHTML="Tunggu "+timeLeft+" detik...";
+ let timer=setInterval(()=>{
+   timeLeft--;
+   countdownEl.innerHTML="Tunggu "+timeLeft+" detik...";
+   if(timeLeft<=0){
+     clearInterval(timer);
+     countdownEl.innerHTML="Siap dikirim!";
+     btn.disabled=false; btn.className="enabled";
+   }
+ },1000);
 }
+
+function formatNumber(num){
+ num=num.replace(/\D/g,'');
+ if(num.startsWith("08")){
+   return "62"+num.substring(1);
+ }
+ return num;
+}
+
+templateSelect.addEventListener("change",()=>{
+ document.getElementById("message").value=templateSelect.value;
+});
+
+btn.onclick=function(){
+ let number=document.getElementById("number").value.trim();
+ let message=document.getElementById("message").value.trim();
+
+ number=formatNumber(number);
+
+ if(!number.startsWith("62")||number.length<10){
+   errorEl.innerHTML="Nomor tidak valid. Gunakan 08 atau 62.";
+   return;
+ } else { errorEl.innerHTML=""; }
+
+ localStorage.setItem("lastNumber",number);
+ localStorage.setItem("darkMode",document.body.classList.contains("dark"));
+
+ let link="https://wa.me/"+number+"?text="+encodeURIComponent(message);
+ window.open(link,"_blank");
+}
+
+function toggleMode(){
+ document.body.classList.toggle("dark");
+ localStorage.setItem("darkMode",document.body.classList.contains("dark"));
+}
+
+window.onload=function(){
+ startCountdown();
+ if(localStorage.getItem("lastNumber")){
+   document.getElementById("number").value=localStorage.getItem("lastNumber");
+ }
+ if(localStorage.getItem("darkMode")==="true"){
+   document.body.classList.add("dark");
+ }
+}
+
+timerSelect.addEventListener("change",startCountdown);
 </script>
 
 </body>
