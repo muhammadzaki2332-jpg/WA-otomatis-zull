@@ -1,10 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WA Otomatis - Zull Tool v2.0</title>
-<style>.timer-wrapper{
+<title>WA Otomatis - Zull Tool</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Segoe UI, sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.container{
+  background:white;
+  width:360px;
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.3);
+}
+
+h2{
+  text-align:center;
+  margin-bottom:5px;
+}
+
+.brand{
+  text-align:center;
+  font-size:12px;
+  color:gray;
+  margin-bottom:15px;
+}
+
+input, textarea, select{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.disabled{
+  background:#aaa;
+  color:white;
+}
+
+.enabled{
+  background:#25D366;
+  color:white;
+  box-shadow:0 0 15px #25D366;
+  cursor:pointer;
+}
+
+.timer-wrapper{
   position:relative;
   width:120px;
   height:120px;
@@ -15,10 +77,16 @@
   transform:rotate(-90deg);
 }
 
-.progress-ring__circle{
-  stroke-dasharray: 326;
-  stroke-dashoffset: 326;
-  transition: stroke-dashoffset 1s linear;
+.progress-ring circle{
+  stroke:#25D366;
+  stroke-width:8;
+  fill:transparent;
+  r:52;
+  cx:60;
+  cy:60;
+  stroke-dasharray:326;
+  stroke-dashoffset:326;
+  transition:stroke-dashoffset 1s linear;
 }
 
 .timer-text{
@@ -28,208 +96,112 @@
   transform:translate(-50%,-50%);
   font-weight:bold;
   font-size:14px;
-  text-align:center;
 }
-:root{
-  --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
-  --card:#ffffff; --text:#111; --muted:#666;
-  --primary:#25D366; --danger:#e74c3c;
-}
-body.dark{
-  --card:#1f1f1f; --text:#f5f5f5; --muted:#aaa;
-}
-body{
-  font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
-  display:flex; justify-content:center; align-items:center;
-  height:100vh; margin:0;
-}
-.container{
-  background:var(--card); color:var(--text);
-  padding:28px; border-radius:16px; width:360px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.35);
-  animation:fadeIn .6s ease;
-}
-h2{margin:0 0 4px; text-align:center;}
-.brand{font-size:12px; color:var(--muted); text-align:center; margin-bottom:12px;}
-input,textarea,select{
-  width:100%; padding:10px; margin:8px 0;
-  border-radius:8px; border:1px solid #ccc; font-size:14px;
-}
-button{
-  width:100%; padding:12px; border:none;
-  border-radius:10px; font-weight:bold; font-size:15px;
-  transition:.3s;
-}
-.disabled{background:#aaa;color:white;}
-.enabled{
-  background:var(--primary); color:white;
-  box-shadow:0 0 15px var(--primary);
-  cursor:pointer;
-}
-.enabled:hover{transform:scale(1.03);}
-#error{color:var(--danger); font-size:12px;}
-#countdown{text-align:center; font-weight:bold; margin:5px 0;}
-.toggle{
-  text-align:right; font-size:12px; cursor:pointer;
-  color:var(--muted); margin-bottom:8px;
-}
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(15px);}
-  to{opacity:1; transform:translateY(0);}
+
+#error{
+  color:red;
+  font-size:12px;
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
-<div class="toggle" onclick="toggleMode()">Toggle Dark/Light</div>
 <h2>Kirim WhatsApp Otomatis</h2>
-<div class="brand">Zull Web Tool v2.0</div>
+<div class="brand">Zull Web Tool</div>
 
 <input type="text" id="number" placeholder="08xxxx atau 628xxxx">
 <div id="error"></div>
 
-<select id="templateSelect">
-<option value="">-- Pilih Template Pesan --</option>
-<option value="Halo, saya ingin bertanya terkait informasi.">Template 1 - Umum</option>
-<option value="Assalamualaikum, izin konfirmasi jadwal ya.">Template 2 - Konfirmasi</option>
-<option value="Terima kasih atas informasinya sebelumnya.">Template 3 - Terima kasih</option>
-</select>
-
 <textarea id="message" placeholder="Tulis pesan..."></textarea>
 
 <select id="timerSelect">
-<option value="120">Delay 2 Menit</option>
-<option value="300">Delay 5 Menit</option>
+  <option value="120">Delay 2 Menit</option>
+  <option value="300">Delay 5 Menit</option>
 </select>
 
 <div class="timer-wrapper">
   <svg class="progress-ring" width="120" height="120">
-    <circle
-      class="progress-ring__circle"
-      stroke="#25D366"
-      stroke-width="8"
-      fill="transparent"
-      r="52"
-      cx="60"
-      cy="60"/>
+    <circle />
   </svg>
   <div id="countdown" class="timer-text"></div>
 </div>
+
 <button id="sendBtn" class="disabled" disabled>Kirim Pesan</button>
 
 </div>
 
 <script>
-let btn=document.getElementById("sendBtn");
-let countdownEl=document.getElementById("countdown");
-let errorEl=document.getElementById("error");
-let timerSelect=document.getElementById("timerSelect");
-let templateSelect=document.getElementById("templateSelect");
+const btn=document.getElementById("sendBtn");
+const countdown=document.getElementById("countdown");
+const timerSelect=document.getElementById("timerSelect");
+const numberInput=document.getElementById("number");
+const messageInput=document.getElementById("message");
+const error=document.getElementById("error");
+const circle=document.querySelector("circle");
+
+let timerInterval;
+
+function formatTime(seconds){
+  let m=Math.floor(seconds/60);
+  let s=seconds%60;
+  return m+"m "+(s<10?"0"+s:s)+"s";
+}
 
 function startCountdown(){
- let totalTime=parseInt(timerSelect.value);
- let timeLeft=totalTime;
+  clearInterval(timerInterval);
 
- const circle=document.querySelector('.progress-ring__circle');
- const radius=52;
- const circumference=2*Math.PI*radius;
+  let total=parseInt(timerSelect.value);
+  let timeLeft=total;
 
- circle.style.strokeDasharray=circumference;
- circle.style.strokeDashoffset=circumference;
+  btn.disabled=true;
+  btn.className="disabled";
 
- btn.disabled=true;
- btn.className="disabled";
+  circle.style.strokeDashoffset=326;
+  countdown.innerHTML=formatTime(timeLeft);
 
- let timer=setInterval(()=>{
-   timeLeft--;
+  timerInterval=setInterval(()=>{
+    timeLeft--;
 
-   let progress=(totalTime-timeLeft)/totalTime;
-   let offset=circumference-(progress*circumference);
-   circle.style.strokeDashoffset=offset;
+    let progress=(total-timeLeft)/total;
+    let offset=326-(progress*326);
+    circle.style.strokeDashoffset=offset;
 
-   let minutes=Math.floor(timeLeft/60);
-   let seconds=timeLeft%60;
+    countdown.innerHTML=formatTime(timeLeft);
 
-   countdownEl.innerHTML=
-     minutes+"m "+(seconds<10?"0"+seconds:seconds)+"s";
-
-   if(timeLeft<=0){
-     clearInterval(timer);
-     countdownEl.innerHTML="Siap!";
-     btn.disabled=false;
-     btn.className="enabled";
-   }
-
- },1000);
-}
-
-function updateDisplay(seconds){
- let minutes=Math.floor(seconds/60);
- let remaining=seconds%60;
- countdownEl.innerHTML=
-   "Tunggu "+minutes+" menit "+remaining+" detik...";
-}
- btn.disabled=true; btn.className="disabled";
- countdownEl.innerHTML="Tunggu "+timeLeft+" detik...";
- let timer=setInterval(()=>{
-   timeLeft--;
-   countdownEl.innerHTML="Tunggu "+timeLeft+" detik...";
-   if(timeLeft<=0){
-     clearInterval(timer);
-     countdownEl.innerHTML="Siap dikirim!";
-     btn.disabled=false; btn.className="enabled";
-   }
- },1000);
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      countdown.innerHTML="Siap!";
+      btn.disabled=false;
+      btn.className="enabled";
+    }
+  },1000);
 }
 
 function formatNumber(num){
- num=num.replace(/\D/g,'');
- if(num.startsWith("08")){
-   return "62"+num.substring(1);
- }
- return num;
+  num=num.replace(/\D/g,'');
+  if(num.startsWith("08")){
+    return "62"+num.substring(1);
+  }
+  return num;
 }
-
-templateSelect.addEventListener("change",()=>{
- document.getElementById("message").value=templateSelect.value;
-});
 
 btn.onclick=function(){
- let number=document.getElementById("number").value.trim();
- let message=document.getElementById("message").value.trim();
+  let number=formatNumber(numberInput.value.trim());
+  let message=messageInput.value.trim();
 
- number=formatNumber(number);
+  if(!number.startsWith("62")||number.length<10){
+    error.innerHTML="Nomor tidak valid.";
+    return;
+  }
 
- if(!number.startsWith("62")||number.length<10){
-   errorEl.innerHTML="Nomor tidak valid. Gunakan 08 atau 62.";
-   return;
- } else { errorEl.innerHTML=""; }
-
- localStorage.setItem("lastNumber",number);
- localStorage.setItem("darkMode",document.body.classList.contains("dark"));
-
- let link="https://wa.me/"+number+"?text="+encodeURIComponent(message);
- window.open(link,"_blank");
-}
-
-function toggleMode(){
- document.body.classList.toggle("dark");
- localStorage.setItem("darkMode",document.body.classList.contains("dark"));
-}
-
-window.onload=function(){
- startCountdown();
- if(localStorage.getItem("lastNumber")){
-   document.getElementById("number").value=localStorage.getItem("lastNumber");
- }
- if(localStorage.getItem("darkMode")==="true"){
-   document.body.classList.add("dark");
- }
+  error.innerHTML="";
+  window.open("https://wa.me/"+number+"?text="+encodeURIComponent(message),"_blank");
 }
 
 timerSelect.addEventListener("change",startCountdown);
+window.onload=startCountdown;
 </script>
 
 </body>
